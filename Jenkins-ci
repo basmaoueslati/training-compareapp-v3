@@ -12,10 +12,17 @@ pipeline {
                 sh 'mvn test'
             }
         }
-
-        stage('Run Ansible Playbook') {
+        stage('Docker Build&Push') {
             steps {
-                
+                withDockerRegistry(credentialsId: 'docker', url: "") {
+                    sh 'docker build -t basmaoueslati/compare-appf25:v1 .'
+                    sh 'docker push basmaoueslati/compare-appf25:v1'
+                }
+            }
+        }
+//deploiement continue
+        stage('Run Ansible Playbook') {
+            steps {            
                 sh 'ansible-playbook -i inventory.ini playbook.yml'
             
         }
