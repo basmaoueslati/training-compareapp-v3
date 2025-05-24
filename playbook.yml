@@ -7,8 +7,8 @@
      
     - name: Copy JAR file to remote host
       copy:
-        src=/var/lib/jenkins/workspace/comparev3/target/myapp.jar
-        dest=/opt/myapp/myapp.jar
+        src=/var/lib/jenkins/workspace/comparev3/target/numeric-0.0.1.jar
+        dest=/opt/myapp/numeric-0.0.1.jar
         mode=0755
 
     - name: Copy Dockerfile
@@ -19,14 +19,14 @@
     - name: Build Docker Image
       docker_image:
         path: /opt/myapp
-        name: my-java-app
+        name: Java-app
         tag: latest
         state: present
 
     - name: Run Docker Container
       docker_container:
-        name: my-java-app
-        image: my-java-app:latest
+        name: Java-app
+        image: Java-app:latest
         state: started
         restart_policy: always
         ports:
