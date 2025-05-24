@@ -1,40 +1,31 @@
 ---
-- name: Deploy comparev3 app to Docker container
+- name: Deploy Docker container to server
   hosts: dockerC
-  become: yes
+  become: true
+  vars:
+    image_name: "basmaoueslati/compare-appf25:v1"
+    image_tag: "v1"
+    container_name: "compare-app"
+    app_port: 8080
 
   tasks:
-
-    - name: Ensure target directory exists
-      file:
-        path: /opt/myapp
-        state: directory
-        mode: '0755'
-
-    - name: Copy JAR file to remote host
-      copy:
-        src: /var/lib/jenkins/workspace/comparev3/target/numeric-0.0.1.jar
-        dest: /opt/myapp/numeric-0.0.1.jar
-        mode: '0755'
-
-    - name: Copy Dockerfile to remote host
-      copy:
-        src: /var/lib/jenkins/workspace/comparev3/Dockerfile
-        dest: /opt/myapp/Dockerfile
-        mode: '0644'
-
-    - name: Build Docker Image
+    - name: Pull Docker image
       docker_image:
-        path: /opt/myapp
-        name: java-app
-        tag: latest
-        state: present
+        name: "{{ image_name }}"
+        tag: "{{ image_tag }}"
+        source: pull
 
-    - name: Run Docker Container
+    - name: Stop and remove existing container if any
       docker_container:
-        name: java-app
-        image: java-app:latest
+        name: "{{ container_name }}"
+        state: absent
+        force_kill: true
+
+    - name: Run the container
+      docker_container:
+        name: "{{ container_name }}"
+        image: "{{ image_name }}:{{ image_tag }}"
         state: started
         restart_policy: always
         ports:
-          - "8080:8080"
+          - "{{ app_port }}:8080"
