@@ -1,28 +1,33 @@
 ---
- - name: Deploy J2EE app to Tomcat
-   hosts: tomcat
+ - name: Deploy comparev3 app to Docker container
+   hosts: dockerC
    become: yes
-   vars:
-    tomcat_home: /opt/tomcat
-    app_war: webapp.war
-    app_src_path: '/var/lib/jenkins/workspace/J2EEAnsible1/webapp/target/webapp.war'
-
-    app_dest_path: "{{ tomcat_home }}/webapps/{{ app_war }}"
-    
+   
    tasks:
      
-    - name: Remove old WAR and exploded directory
-      file:
-        path: "{{ item }}"
-        state: absent
-      loop:
-        - "{{ app_dest_path }}"
-        - "{{ app_dest_path | regex_replace('.war$', '') }}"
-        
-    - name: Copy new WAR to Tomcat
+    - name: Copy JAR file to remote host
       copy:
-        src: "{{ app_src_path }}"
-        dest: "{{ app_dest_path }}"
-        owner: ubuntu
-        group: ubuntu
-        mode: '0644'
+        src=target/myapp.jar
+        dest=/opt/myapp/myapp.jar
+        mode=0755
+
+    - name: Copy Dockerfile
+      copy:
+        src=Dockerfile
+        dest=/opt/myapp/Dockerfile
+
+    - name: Build Docker Image
+      docker_image:
+        path: /opt/myapp
+        name: my-java-app
+        tag: latest
+        state: present
+
+    - name: Run Docker Container
+      docker_container:
+        name: my-java-app
+        image: my-java-app:latest
+        state: started
+        restart_policy: always
+        ports:
+          - "8080:8080"
