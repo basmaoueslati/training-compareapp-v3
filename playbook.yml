@@ -4,7 +4,7 @@
   become: true
   vars:
     image_name: "basmaoueslati/compare-appf25"
-    image_tag: "v2"
+    image_tag: "v1"
     container_name: "compare-app"
     app_port: 8080
 
