@@ -16,18 +16,18 @@ pipeline {
         stage('Docker Build&Push') {
             steps {
                 withDockerRegistry(credentialsId: 'docker', url: "") {
-                    sh 'docker build -t basmaoueslati/compare-appf25 .'
-                    sh 'docker push basmaoueslati/compare-appf25'
+                    sh 'docker build -t basmaoueslati/compare-appf25:v1 .'
+                    sh 'docker push basmaoueslati/compare-appf25:v1'
                 }
             }
         }
         //Continuous Deployment
-        stage('Deploy') {
-            steps {
-                withDockerRegistry(credentialsId: 'docker', url: "") {
-                    sh 'docker -H ssh://ubuntu@15.188.73.227 run -d --name myapp -p 8082:8080 basmaoueslati/compare-appf25'
-                }
-            }  
+      //  stage('Deploy') {
+        //    steps {
+          //      withDockerRegistry(credentialsId: 'docker', url: "") {
+            //        sh 'docker -H ssh://ubuntu@15.188.73.227 run -d --name myapp -p 8082:8080 basmaoueslati/compare-appf25'
+              //  }
+           // }  
         }
 //Ansible
         stage('Run Ansible Playbook') {
