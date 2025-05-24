@@ -15,8 +15,8 @@ pipeline {
         stage('Docker Build&Push') {
             steps {
                 withDockerRegistry(credentialsId: 'docker', url: "") {
-                    sh 'docker build -t basmaoueslati/compare-appf25:v1 .'
-                    sh 'docker push basmaoueslati/compare-appf25:v1'
+                    sh 'docker build -t basmaoueslati/compare-appf25 .'
+                    sh 'docker push basmaoueslati/compare-appf25'
                 }
             }
         }
@@ -27,7 +27,7 @@ pipeline {
 
                 sh '''
                 docker images --filter=reference='basmaoueslati/compare-appf25*' --format '{{.ID}} {{.Repository}}:{{.Tag}}' \
-                  | grep -v 'compare-appf25:v1' \
+                  | grep -v 'compare-appf25' \
                   | awk '{print $1}' \
                   | xargs -r docker rmi -f || true
                 '''
