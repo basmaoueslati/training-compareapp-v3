@@ -1,0 +1,28 @@
+---
+ - name: Deploy J2EE app to Tomcat
+   hosts: tomcat
+   become: yes
+   vars:
+    tomcat_home: /opt/tomcat
+    app_war: webapp.war
+    app_src_path: '/var/lib/jenkins/workspace/J2EEAnsible1/webapp/target/webapp.war'
+
+    app_dest_path: "{{ tomcat_home }}/webapps/{{ app_war }}"
+    
+   tasks:
+     
+    - name: Remove old WAR and exploded directory
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - "{{ app_dest_path }}"
+        - "{{ app_dest_path | regex_replace('.war$', '') }}"
+        
+    - name: Copy new WAR to Tomcat
+      copy:
+        src: "{{ app_src_path }}"
+        dest: "{{ app_dest_path }}"
+        owner: ubuntu
+        group: ubuntu
+        mode: '0644'
