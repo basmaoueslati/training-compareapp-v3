@@ -7,7 +7,7 @@
      
     - name: Copy JAR file to remote host
       copy:
-        src=target/myapp.jar
+        src=/var/lib/jenkins/workspace/comparev3/target/myapp.jar
         dest=/opt/myapp/myapp.jar
         mode=0755
 
