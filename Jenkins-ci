@@ -26,9 +26,9 @@ pipeline {
                 sh 'docker image prune -f'
 
                 sh '''
-                sudo -i docker images --filter=reference='basmaoueslati/compare-appf25*' --format '{{.ID}} {{.Repository}}:{{.Tag}}' \
+                docker images --filter=reference='basmaoueslati/compare-appf25*' --format '{{.ID}} {{.Repository}}:{{.Tag}}' \
                   | awk '{print $1}' \
-                  | sudo -i xargs -r docker rmi -f
+                  | xargs -r docker rmi -f
                 '''
             }
         }
