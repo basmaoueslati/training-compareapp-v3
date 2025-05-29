@@ -27,7 +27,7 @@ public class NumericController {
 
 		@GetMapping("/")
 		public String welcome() {
-			return "Hello Devops From Container";
+			return "Hello Devops with ansible From Container v3";
 		}
 
 		@GetMapping("/compare/{value}")
