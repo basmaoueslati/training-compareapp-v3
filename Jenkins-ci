@@ -20,7 +20,7 @@ pipeline {
                 }
             }
         }
-        stage('Clean Old Docker Images') {
+        stage('Clean Old Docker Images on Local') {
             steps {
                 echo '___Cleaning up unused Docker images___'
                 sh 'docker image prune -f'
@@ -32,7 +32,32 @@ pipeline {
                 '''
             }
         }
-//deploiement continue
+        stage('Clean Old Docker Images on Remote') {
+            steps {
+                echo '___Cleaning up old Docker images on remote server___'
+                sh '''
+                # Find containers using the image and remove them
+                IMAGE_ID=$(docker -H ssh://ubuntu@13.38.26.14 images --filter=reference='basmaoueslati/compare-appf25:v1' --format '{{.ID}}')
+        
+                if [ -n "$IMAGE_ID" ]; then
+                  CONTAINERS=$(docker -H ssh://ubuntu@13.38.26.14 ps -a -q --filter ancestor=$IMAGE_ID)
+                  if [ -n "$CONTAINERS" ]; then
+                    echo "Stopping and removing containers using the image..."
+                    docker -H ssh://ubuntu@13.38.26.14 rm -f $CONTAINERS
+                  fi
+        
+                  echo "Removing image $IMAGE_ID..."
+                  docker -H ssh://ubuntu@13.38.26.14 rmi -f $IMAGE_ID
+                else
+                  echo "Image not found on remote server."
+                fi
+        
+                echo "Pruning dangling images..."
+                docker -H ssh://ubuntu@13.38.26.14 image prune -f
+                '''
+            }
+        }
+//deployment continue
         stage('Run Ansible Playbook') {
             steps {            
                 sh 'ansible-playbook -i inventory.ini playbook.yml'
