@@ -37,7 +37,7 @@ pipeline {
                 echo '___Cleaning up old Docker images on remote server___'
                 sh '''
                 # Find containers using the image and remove them
-                IMAGE_ID=$(docker -H ssh://ubuntu@13.38.26.14 images --filter=reference='basmaoueslati/compare-appf25:v1' --format '{{.ID}}')
+                IMAGE_ID=$(docker -H ssh://ubuntu@13.38.26.14 images --filter=reference='basmaoueslati/compare-appf25*' --format '{{.ID}}')
         
                 if [ -n "$IMAGE_ID" ]; then
                   CONTAINERS=$(docker -H ssh://ubuntu@13.38.26.14 ps -a -q --filter ancestor=$IMAGE_ID)
