@@ -28,7 +28,7 @@ pipeline {
                 sh '''
                 sudo -i docker images --filter=reference='basmaoueslati/compare-appf25*' --format '{{.ID}} {{.Repository}}:{{.Tag}}' \
                   | awk '{print $1}' \
-                  | sudo xargs -r docker rmi -f
+                  | sudo -i xargs -r docker rmi -f
                 '''
             }
         }
