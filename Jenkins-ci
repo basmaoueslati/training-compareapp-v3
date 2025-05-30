@@ -36,7 +36,9 @@ pipeline {
             steps {
                 echo '___Cleaning up old Docker images on remote server___'
                 sh '''
-                IMAGE_IDS=$(docker -H ssh://ubuntu@15.188.146.236 images --filter=reference='basmaoueslati/compare-appf25*' --format '{{.ID}}')
+                //IMAGE_IDS=$(docker -H ssh://ubuntu@15.188.146.236 images --filter=reference='basmaoueslati/compare-appf25*' --format '{{.ID}}')
+                IMAGE_IDS=$(ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ubuntu@15.188.146.236 "docker images --filter=reference='basmaoueslati/compare-appf25*' --format '{{.ID}}'")
+
         
                 for IMAGE_ID in $IMAGE_IDS; do
                     echo "Processing image ID: $IMAGE_ID"
