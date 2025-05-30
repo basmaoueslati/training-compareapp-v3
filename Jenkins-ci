@@ -43,20 +43,22 @@ pipeline {
                     echo "Processing image ID: $IMAGE_ID"
         
                     # Get containers based on the image
-                    CONTAINERS=$(docker -H ssh://ubuntu@15.188.146.236 ps -a -q --filter ancestor=$IMAGE_ID)
+                CONTAINERS=$(ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ubuntu@15.188.146.236 "docker ps -a -q --filter ancestor=$IMAGE_ID")
         
                     if [ -n "$CONTAINERS" ]; then
                         echo "Stopping and removing containers using image $IMAGE_ID"
-                        docker -H ssh://ubuntu@15.188.146.236 rm -f $CONTAINERS
+                        ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ubuntu@15.188.146.236 "docker rm -f $CONTAINERS"
+
                     fi
         
                     # Attempt to remove the image
                     echo "Removing image $IMAGE_ID"
-                    docker -H ssh://ubuntu@15.188.146.236 rmi -f $IMAGE_ID || echo "Could not remove image $IMAGE_ID"
+                    ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ubuntu@15.188.146.236 "docker rmi -f $IMAGE_ID" || echo "Could not remove image $IMAGE_ID"
                 done
         
                 echo "Pruning dangling images"
-                docker -H ssh://ubuntu@15.188.146.236 image prune -f
+                ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ubuntu@15.188.146.236 "docker image prune -f"
+
                 '''
             }
         }
